@@ -1,0 +1,53 @@
+/*
+ * ExamForge — global base styles
+ *
+ * Design tokens (colours, spacing, typography, durations) will be defined
+ * here in Phase 4 when the design system (03-UI-UX.md) is implemented.
+ * No hardcoded values anywhere — everything will reference CSS custom properties.
+ *
+ * This file intentionally provides only a minimal reset for the scaffold.
+ * Do NOT add hardcoded colours, sizes, or fonts here.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* Base font size — all rem values scale from this */
+  font-size: 16px;
+  /* Smooth scrolling for anchor links */
+  scroll-behavior: smooth;
+}
+
+body {
+  /* Font stack — will be replaced with design-system tokens in Phase 4 */
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    sans-serif;
+  line-height: 1.5;
+  /* Respect user preference for reduced motion (CLAUDE.md §4 / UI-UX §3.5) */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Respect reduced-motion preference across all animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // Next.js requires these overrides
+    "lib": ["dom", "dom.iterable", "es2022"],
+    "jsx": "preserve",
+    "noEmit": true,
+    "incremental": true,
+    "moduleResolution": "bundler",
+    "plugins": [{ "name": "next" }],
+
+    // Path aliases — use @/* for src-relative imports
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@examforge/db": ["../../packages/db/src/index.ts"],
+      "@examforge/shared-types": ["../../packages/shared-types/src/index.ts"]
+    },
+
+    // Next.js apps don't emit declarations — disable base defaults
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+
+    // Relax: index-access on DOM APIs creates too much noise
+    "noPropertyAccessFromIndexSignature": false
+  },
+  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", "app/**/*.ts", "app/**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", ".next", "out"]
+}

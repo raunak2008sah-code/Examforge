@@ -1,0 +1,20 @@
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Generated files — never format these
+node_modules/
+pnpm-lock.yaml
+*.tsbuildinfo
+
+# Python (Ruff handles formatting)
+apps/doc-processor/
+
+# Prisma generated client (in node_modules, but explicit for clarity)
+**/prisma/generated/
+
+# Coverage reports
+coverage/
+htmlcov/
