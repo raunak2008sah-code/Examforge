@@ -13,16 +13,6 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    },
-    "./api": {
-      "import": "./dist/api/index.js",
-      "require": "./dist/api/index.js",
-      "types": "./dist/api/index.d.ts"
-    },
-    "./parser": {
-      "import": "./dist/parser/index.js",
-      "require": "./dist/parser/index.js",
-      "types": "./dist/parser/index.d.ts"
     }
   },
   "files": [
@@ -39,5 +29,9 @@
   "devDependencies": {
     "rimraf": "6.0.1",
     "typescript": "5.6.3"
+  },
+  "dependencies": {
+    "@examforge/db": "workspace:^",
+    "zod": "^4.4.3"
   }
 }
