@@ -29,11 +29,15 @@ const navItems = [
   { name: 'Audit Logs', href: '/admin/audit-logs', icon: ShieldAlert },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onCloseMobile?: () => void;
+}
+
+export function Sidebar({ onCloseMobile }: SidebarProps = {}) {
   const pathname = usePathname();
 
   return (
-    <aside className="admin-sidebar">
+    <>
       <div className="admin-sidebar-header">ExamForge Admin</div>
       <nav className="admin-sidebar-nav">
         {navItems.map((item) => {
@@ -45,6 +49,7 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onCloseMobile}
               className={`admin-sidebar-item ${isActive ? 'active' : ''}`}
             >
               <Icon size={20} />
@@ -53,6 +58,6 @@ export function Sidebar() {
           );
         })}
       </nav>
-    </aside>
+    </>
   );
 }

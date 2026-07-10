@@ -5,6 +5,7 @@ interface LoadingSkeletonProps {
   height?: string | number;
   borderRadius?: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export function LoadingSkeleton({
@@ -12,6 +13,7 @@ export function LoadingSkeleton({
   height = '20px',
   borderRadius = 'var(--radius-sm)',
   className = '',
+  style = {},
 }: LoadingSkeletonProps) {
   return (
     <div
@@ -23,6 +25,7 @@ export function LoadingSkeleton({
         backgroundColor: 'var(--bg-sunken)',
         overflow: 'hidden',
         position: 'relative',
+        ...style,
       }}
       aria-hidden="true"
     >

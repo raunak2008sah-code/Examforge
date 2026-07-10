@@ -2,6 +2,18 @@ import { PrismaClient } from '@prisma/client';
 
 export * from '@prisma/client';
 
+// Explicitly re-export enums so Next.js (SWC) and Vercel build can reliably resolve them
+export {
+  RoleName,
+  FilePurpose,
+  ParserStatus,
+  ReviewStatus,
+  ExamVersionStatus,
+  AttemptStatus,
+  OptionLabel,
+  ExamType,
+} from '@prisma/client';
+
 const createPrismaClient = () => {
   const client = new PrismaClient();
 
