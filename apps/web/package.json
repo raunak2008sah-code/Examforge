@@ -15,6 +15,7 @@
     "lint:staged": "eslint --fix --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "verify:auth": "tsx scripts/verify-auth-flow.ts",
+    "verify:authorization": "tsx scripts/verify-authorization-flow.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "clean": "rimraf .next out dist"

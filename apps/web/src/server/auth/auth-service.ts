@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import { prisma, type RoleName } from '@examforge/db';
 import { auth, type BetterAuthSession } from './auth';
+import { hasPermission, type Permission } from './permissions';
 
 export type AuthenticatedSession = BetterAuthSession & {
   user: BetterAuthSession['user'] & {
@@ -59,40 +60,119 @@ const enrichSession = async (
   };
 };
 
-export const authService = {
-  async getSession(): Promise<AuthenticatedSession | null> {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+const getSessionFromHeaders = async (
+  requestHeaders: Headers,
+): Promise<AuthenticatedSession | null> => {
+  const session = await auth.api.getSession({
+    headers: requestHeaders,
+  });
 
-    return enrichSession(session);
+  return enrichSession(session);
+};
+
+const requireAuthFromHeaders = async (requestHeaders: Headers): Promise<AuthenticatedSession> => {
+  const session = await getSessionFromHeaders(requestHeaders);
+
+  if (!session) {
+    throw new AuthServiceError('UNAUTHENTICATED', 'Authentication is required.');
+  }
+
+  return session;
+};
+
+const requireRoleFromHeaders = async (
+  requestHeaders: Headers,
+  role: RoleName,
+): Promise<AuthenticatedSession> => {
+  const session = await requireAuthFromHeaders(requestHeaders);
+
+  if (session.user.role !== role) {
+    throw new AuthServiceError('FORBIDDEN', 'Insufficient permissions.');
+  }
+
+  return session;
+};
+
+const requireAnyRoleFromHeaders = async (
+  requestHeaders: Headers,
+  roles: readonly RoleName[],
+): Promise<AuthenticatedSession> => {
+  const session = await requireAuthFromHeaders(requestHeaders);
+
+  if (!roles.includes(session.user.role)) {
+    throw new AuthServiceError('FORBIDDEN', 'Insufficient permissions.');
+  }
+
+  return session;
+};
+
+const requirePermissionFromHeaders = async (
+  requestHeaders: Headers,
+  permission: Permission,
+): Promise<AuthenticatedSession> => {
+  const session = await requireAuthFromHeaders(requestHeaders);
+
+  if (!hasPermission(session.user.role, permission)) {
+    throw new AuthServiceError('FORBIDDEN', 'Insufficient permissions.');
+  }
+
+  return session;
+};
+
+const requireOwnershipFromHeaders = async (
+  requestHeaders: Headers,
+  resource: { userId: string },
+): Promise<AuthenticatedSession> => {
+  const session = await requireAuthFromHeaders(requestHeaders);
+
+  if (session.user.role === 'ADMIN' || session.user.id === resource.userId) {
+    return session;
+  }
+
+  throw new AuthServiceError('FORBIDDEN', 'Resource ownership is required.');
+};
+
+export const authService = {
+  getSessionFromHeaders,
+  requireAuthFromHeaders,
+  requireRoleFromHeaders,
+  requireAnyRoleFromHeaders,
+  requirePermissionFromHeaders,
+  requireOwnershipFromHeaders,
+
+  async getSession(): Promise<AuthenticatedSession | null> {
+    return getSessionFromHeaders(await headers());
+  },
+
+  async requireAuth(): Promise<AuthenticatedSession> {
+    return requireAuthFromHeaders(await headers());
   },
 
   async requireRole(role: RoleName): Promise<AuthenticatedSession> {
-    const session = await this.getSession();
-
-    if (!session) {
-      throw new AuthServiceError('UNAUTHENTICATED', 'Authentication is required.');
-    }
-
-    if (session.user.role !== role) {
-      throw new AuthServiceError('FORBIDDEN', 'Insufficient permissions.');
-    }
-
-    return session;
+    return requireRoleFromHeaders(await headers(), role);
   },
 
-  async requireOwnership(resource: { userId: string }): Promise<void> {
-    const session = await this.getSession();
+  async requireAnyRole(roles: readonly RoleName[]): Promise<AuthenticatedSession> {
+    return requireAnyRoleFromHeaders(await headers(), roles);
+  },
 
-    if (!session) {
-      throw new AuthServiceError('UNAUTHENTICATED', 'Authentication is required.');
-    }
+  async requireAdmin(): Promise<AuthenticatedSession> {
+    return this.requireRole('ADMIN');
+  },
 
-    if (session.user.role === 'ADMIN' || session.user.id === resource.userId) {
-      return;
-    }
+  async requireReviewer(): Promise<AuthenticatedSession> {
+    return this.requireRole('REVIEWER');
+  },
 
-    throw new AuthServiceError('FORBIDDEN', 'Resource ownership is required.');
+  async requireStudent(): Promise<AuthenticatedSession> {
+    return this.requireRole('STUDENT');
+  },
+
+  async requirePermission(permission: Permission): Promise<AuthenticatedSession> {
+    return requirePermissionFromHeaders(await headers(), permission);
+  },
+
+  async requireOwnership(resource: { userId: string }): Promise<AuthenticatedSession> {
+    return requireOwnershipFromHeaders(await headers(), resource);
   },
 };
