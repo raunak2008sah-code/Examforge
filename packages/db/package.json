@@ -20,7 +20,7 @@
     "prisma"
   ],
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build": "pnpm db:generate && tsc --project tsconfig.json",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "db:generate": "prisma generate",

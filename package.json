@@ -25,6 +25,7 @@
     "test": "pnpm -r test",
     "clean": "pnpm -r clean && rimraf node_modules",
     "install:all": "pnpm install",
+    "postinstall": "pnpm --filter @examforge/db db:generate",
     "prepare": "husky"
   },
   "devDependencies": {
