@@ -112,7 +112,14 @@ const config = [
 
   // Server-only files — may import freely from server/
   {
-    files: ['**/server/**/*.ts', '**/actions/**/*.ts', '**/queries/**/*.ts', 'app/api/**/*.ts'],
+    files: [
+      '**/server/**/*.ts', 
+      '**/actions/**/*.ts', 
+      '**/queries/**/*.ts', 
+      'app/api/**/*.ts',
+      'app/**/page.tsx',
+      'app/**/layout.tsx'
+    ],
     rules: {
       'no-restricted-imports': 'off',
     },
