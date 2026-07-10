@@ -112,8 +112,17 @@ const config = [
 
   // Server-only files — may import freely from server/
   {
-    files: ['**/server/**/*.ts', '**/actions/**/*.ts', '**/queries/**/*.ts'],
+    files: ['**/server/**/*.ts', '**/actions/**/*.ts', '**/queries/**/*.ts', 'app/api/**/*.ts'],
     rules: {
+      'no-restricted-imports': 'off',
+    },
+  },
+
+  // Local verification scripts are operational tooling, not browser code.
+  {
+    files: ['scripts/**/*.ts'],
+    rules: {
+      'no-console': 'off',
       'no-restricted-imports': 'off',
     },
   },
